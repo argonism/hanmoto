@@ -1,8 +1,8 @@
 from typing import Dict
 
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
-from dotenv import load_dotenv
 
 from tofu import Tofu
 

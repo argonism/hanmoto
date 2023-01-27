@@ -1,7 +1,8 @@
 from __future__ import annotations
-from types import TracebackType
-from typing import Union, Dict, List, Optional, TypeVar, Type
+
 import os
+from types import TracebackType
+from typing import Dict, List, Optional, Type, TypeVar, Union
 
 from escpos.printer import Network
 
