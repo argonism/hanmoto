@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import abc
 import os
 from types import TracebackType
 from typing import Dict, Iterable, Optional, Type, TypeVar, Union
@@ -10,16 +11,28 @@ T = TypeVar("T", covariant=True)
 
 
 class HmtException(Exception):
+    """
+    Hanmoto Base Exception.
+    """
+
     ...
 
 
 class HmtValueException(HmtException):
+    """
+    Hanmoto Value Exception.
+    """
+
     def __init__(self, msg: str) -> None:
         self.message = msg
         super().__init__(self.message)
 
 
-class Printable(object):
+class Printable(metaclass=abc.ABCMeta):
+    """
+    Abstract base class for printable objects that can be passed to Hanmoto.
+    """
+
     ...
 
 
@@ -27,6 +40,25 @@ PROPERTIES_TYPE = Dict[str, Union[bool, int, str]]
 
 
 class HmtImage(Printable):
+    f"""
+    Printable class for printing a image.
+
+    ...
+
+    Attributes
+    ----------
+    image_path : str
+        source image path
+
+    Parameters
+    ----------
+    image_path : str
+        Image source path
+    properties : {PROPERTIES_TYPE}, optional
+        Dict that specify image style.
+        see https://github.com/python-escpos/python-escpos/blob/master/src/escpos/escpos.py#L123 for details.
+    """
+
     def __init__(
         self, image_path: str, properties: PROPERTIES_TYPE = {}
     ) -> None:
@@ -68,6 +100,24 @@ class HmtImage(Printable):
 
 
 class HmtText(Printable):
+    f"""
+    Printable class for printing a text.
+    ...
+
+    Attributes
+    ----------
+    text : str
+        text to print
+
+    Parameters
+    ----------
+    text : str
+        Image source path
+    properties : {PROPERTIES_TYPE}, optional
+        Dict that specify text style.
+        see https://github.com/python-escpos/python-escpos/blob/master/src/escpos/escpos.py#L624 for details.
+    """
+
     def __init__(self, text: str, properties: PROPERTIES_TYPE = {}) -> None:
         self.text = text
         self.__properties: PROPERTIES_TYPE = properties
@@ -145,6 +195,21 @@ class HmtText(Printable):
 
 
 class Hanmoto(object):
+    """
+    Printer class for printing printable objects.
+    ...
+
+    Attributes
+    ----------
+    printer : Escpos
+        printer class from escpos package
+
+    Parameters
+    ----------
+    printer : Escpos
+        printer class from escpos package
+    """
+
     def __init__(self, printer: Escpos) -> None:
         self.printer = printer
         self.printer.charcode("CP932")
@@ -154,6 +219,27 @@ class Hanmoto(object):
     def from_network(
         cls, host: str = "", port: int = 9100, timeout: int = 60
     ) -> Hanmoto:
+        """
+        Initialize Hanmoto with network connected printer
+
+        Parameters
+        ----------
+        host : str
+            hostname, ip address of the printer
+        port : int, optional
+            port number of the printer
+        timeout : int, optional
+            timeout in seconds for the escpos-library
+
+        Returns
+        -------
+        hanmoto : Hanmoto
+            instance of Hanmoto that is initialized with Network printer
+
+        See Also
+        --------
+        https://github.com/python-escpos/python-escpos/blob/master/src/escpos/printer.py#L209
+        """
         if (
             "HANMOTO_PRINTER_IP" in os.environ
             and os.environ["HANMOTO_PRINTER_IP"]
@@ -168,6 +254,18 @@ class Hanmoto(object):
 
     @classmethod
     def from_dummy(cls) -> Hanmoto:
+        """
+        Initialize Hanmoto with dummy printer
+
+        Returns
+        -------
+        hanmoto : Hanmoto
+            instance of Hanmoto that is initialized with Dummy printer
+
+        See Also
+        --------
+        https://github.com/python-escpos/python-escpos/blob/master/src/escpos/printer.py#L330
+        """
         printer = Dummy()
         instance = cls(printer)
         return instance
