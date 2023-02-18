@@ -2,7 +2,7 @@ import unittest
 
 from dotenv import load_dotenv
 
-from tofu.printer import Tofu, TofuText, TofuValueException
+from tofu.printer import PROPERTIES_TYPE, TofuText, TofuValueException
 
 load_dotenv()
 
@@ -12,6 +12,21 @@ class TestTofuText(unittest.TestCase):
         text = "dummy text"
         tofu_text = TofuText(text)
         self.assertEqual(tofu_text.text, text)
+        properties: PROPERTIES_TYPE = {
+            "align": "left",
+            "font": 0,
+            "bold": True,
+            "underline": 2,
+            "width": 8,
+            "height": 7,
+            "density": 7,
+            "invert": True,
+            "flip": True,
+            "double_width": True,
+            "double_height": True,
+        }
+        tofu_text = TofuText(text, properties=properties)
+        self.assertEqual(tofu_text.properties, properties)
 
     def test_text_align(self) -> None:
         text = "text"

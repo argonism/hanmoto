@@ -27,9 +27,11 @@ PROPERTIES_TYPE = Dict[str, Union[bool, int, str]]
 
 
 class TofuImage(Printable):
-    def __init__(self, image_path: str) -> None:
+    def __init__(
+        self, image_path: str, properties: PROPERTIES_TYPE = {}
+    ) -> None:
         self.image_path = image_path
-        self.__properties: PROPERTIES_TYPE = {}
+        self.__properties: PROPERTIES_TYPE = properties
         super().__init__()
 
     @property
@@ -66,9 +68,9 @@ class TofuImage(Printable):
 
 
 class TofuText(Printable):
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str, properties: PROPERTIES_TYPE = {}) -> None:
         self.text = text
-        self.__properties: PROPERTIES_TYPE = {}
+        self.__properties: PROPERTIES_TYPE = properties
         super().__init__()
 
     @property
