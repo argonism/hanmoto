@@ -23,69 +23,80 @@ class Printable(object):
     ...
 
 
+PROPERTIES_TYPE = Dict[str, Union[bool, int, str]]
+
+
 class TofuImage(Printable):
     def __init__(self, image_path: str) -> None:
         self.image_path = image_path
-        self.properties: Dict[str, Union[bool, int, str]] = {}
+        self.__properties: PROPERTIES_TYPE = {}
         super().__init__()
 
+    @property
+    def properties(self) -> PROPERTIES_TYPE:
+        return self.__properties
+
     def high_density_vertical(self) -> TofuImage:
-        self.properties["high_density_vertical"] = True
+        self.__properties["high_density_vertical"] = True
         return self
 
     def high_density_horizontal(self) -> TofuImage:
-        self.properties["high_density_horizontal"] = True
+        self.__properties["high_density_horizontal"] = True
         return self
 
     def bitImageRaster(self) -> TofuImage:
-        self.properties["impl"] = "bitImageRaster"
+        self.__properties["impl"] = "bitImageRaster"
         return self
 
     def graphics(self) -> TofuImage:
-        self.properties["impl"] = "graphics"
+        self.__properties["impl"] = "graphics"
         return self
 
     def bitImageColumn(self) -> TofuImage:
-        self.properties["impl"] = "bitImageColumn"
+        self.__properties["impl"] = "bitImageColumn"
         return self
 
     def fragment_height(self, height: int = 960) -> TofuImage:
-        self.properties["fragment_height"] = height
+        self.__properties["fragment_height"] = height
         return self
 
     def center(self) -> TofuImage:
-        self.properties["center"] = True
+        self.__properties["center"] = True
         return self
 
 
 class TofuText(Printable):
     def __init__(self, text: str) -> None:
         self.text = text
-        self.properties: Dict[str, Union[bool, int, str]] = {}
+        self.__properties: PROPERTIES_TYPE = {}
         super().__init__()
 
+    @property
+    def properties(self) -> PROPERTIES_TYPE:
+        return self.__properties
+
     def center(self) -> TofuText:
-        self.properties["align"] = "center"
+        self.__properties["align"] = "center"
         return self
 
     def right(self) -> TofuText:
-        self.properties["align"] = "right"
+        self.__properties["align"] = "right"
         return self
 
     def left(self) -> TofuText:
-        self.properties["align"] = "left"
+        self.__properties["align"] = "left"
         return self
 
     def font_a(self) -> TofuText:
-        self.properties["font"] = 0
+        self.__properties["font"] = 0
         return self
 
     def font_b(self) -> TofuText:
-        self.properties["font"] = 1
+        self.__properties["font"] = 1
         return self
 
     def bold(self, bold: bool = True) -> TofuText:
-        self.properties["bold"] = bold
+        self.__properties["bold"] = bold
         return self
 
     def underline(self, underline: int = 1) -> TofuText:
@@ -93,41 +104,41 @@ class TofuText(Printable):
             raise TofuValueException(
                 "underline value must be 0 <= underline =< 2"
             )
-        self.properties["underline"] = underline
+        self.__properties["underline"] = underline
         return self
 
     def width(self, width: int = 1) -> TofuText:
         if not (1 <= width <= 8):
             raise TofuValueException("width value must be 1 <= height =< 8")
-        self.properties["width"] = width
+        self.__properties["width"] = width
         return self
 
     def height(self, height: int = 1) -> TofuText:
         if not (1 <= height <= 8):
             raise TofuValueException("height value must be 1 <= height =< 8")
-        self.properties["height"] = height
+        self.__properties["height"] = height
         return self
 
     def density(self, density: int = 8) -> TofuText:
         if not (0 <= density <= 8):
             raise TofuValueException("height value must be 0 <= height =< 8")
-        self.properties["density"] = density
+        self.__properties["density"] = density
         return self
 
     def invert(self, invert: bool = True) -> TofuText:
-        self.properties["invert"] = invert
+        self.__properties["invert"] = invert
         return self
 
     def flip(self, flip: bool = True) -> TofuText:
-        self.properties["flip"] = flip
+        self.__properties["flip"] = flip
         return self
 
     def double_width(self, double_width: bool = True) -> TofuText:
-        self.properties["double_width"] = double_width
+        self.__properties["double_width"] = double_width
         return self
 
     def double_height(self, double_height: bool = True) -> TofuText:
-        self.properties["double_height"] = double_height
+        self.__properties["double_height"] = double_height
         return self
 
 
