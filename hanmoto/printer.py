@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import os
 from types import TracebackType
-from typing import Dict, Iterable, Optional, Type, Union
+from typing import Iterable, Optional, Type
 
 from escpos.printer import Dummy, Escpos, Network
+
+from .exceptions import HmtValueException
+from .printables import HmtImage, HmtText, Printable
 
 
 class Hanmoto(object):

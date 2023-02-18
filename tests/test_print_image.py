@@ -2,7 +2,7 @@ import unittest
 
 from dotenv import load_dotenv
 
-from hanmoto.printer import Hanmoto, HmtImage
+from hanmoto import Hanmoto, HmtImage
 
 load_dotenv()
 

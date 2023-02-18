@@ -2,7 +2,7 @@ import unittest
 
 from dotenv import load_dotenv
 
-from hanmoto.printer import PROPERTIES_TYPE, HmtText, HmtValueException
+from hanmoto import PROPERTIES_TYPE, HmtText, HmtValueException
 
 load_dotenv()
 

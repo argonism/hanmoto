@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hanmoto.printables import PROPERTIES_TYPE, Printable
+from ._printable import PROPERTIES_TYPE, Printable
 
 
 class HmtImage(Printable):

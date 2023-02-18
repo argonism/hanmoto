@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from hanmoto.exceptions import HmtValueException
-from hanmoto.printables import PROPERTIES_TYPE, Printable
+
+from ._printable import PROPERTIES_TYPE, Printable
 
 
 class HmtText(Printable):
