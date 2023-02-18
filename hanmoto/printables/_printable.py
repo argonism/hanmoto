@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, Iterable, Optional, Type, Union
+from typing import Dict, Union
 
 PROPERTIES_TYPE = Dict[str, Union[bool, int, str]]
 
