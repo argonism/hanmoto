@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import os
-from enum import Enum
 from types import TracebackType
 from typing import Dict, Iterable, Optional, Type, TypeVar, Union
 
-from escpos.printer import Network
-from pydantic import BaseModel, Field
+from escpos.printer import Escpos, Network
 
 T = TypeVar("T", covariant=True)
 
@@ -133,56 +131,51 @@ class TofuText(Printable):
         return self
 
 
-class Tofu(Network):
-    _instance: Union[None, Tofu] = None
-
-    def __init__(self, ip_addr: str) -> None:
-        raise NotImplementedError(
-            f"{self.__class__.__name__} cannot be instanciated directly"
-        )
+class Tofu(object):
+    def __init__(self, printer: Escpos) -> None:
+        self.printer = printer
+        self.printer.charcode("CP932")
+        self.printer._raw(b"\x1c\x43\x01")
 
     @classmethod
-    def get_instance(cls) -> Tofu:
-        if cls._instance is not None:
-            return cls._instance
+    def from_network(
+        cls, host: str = "", port: int = 9100, timeout: int = 60
+    ) -> Tofu:
+        if "TOFU_PRINTER_IP" in os.environ and os.environ["TOFU_PRINTER_IP"]:
+            host = os.environ["TOFU_PRINTER_IP"]
+        if not host:
+            raise TofuValueException("host param is needed to be specified")
 
-        cls.ip_addr = os.environ["TOFU_PRINTER_IP"]
-        instance = cls.__new__(cls)
-        super().__init__(instance, cls.ip_addr)
-        instance._setup()
-        cls._instance = instance
-        return cls._instance
-
-    def _setup(self) -> None:
-        self.charcode("CP932")
-        self._raw(b"\x1c\x43\x01")
+        printer = Network(host, port=port, timeout=timeout)
+        instance = cls(printer)
+        return instance
 
     def _text(self, text: str, dw: bool = False, dh: bool = False) -> None:
-        self._raw(b"\x1c\x26")
+        self.printer._raw(b"\x1c\x26")
         n = 0x00
         if dw:
             n += 0x04
         if dh:
             n += 0x08
         if n != 0x00:
-            self._raw(b"\x1c\x21" + n.to_bytes(1, byteorder="big"))
-        self._raw(text.encode("shift_jis", "ignore"))
+            self.printer._raw(b"\x1c\x21" + n.to_bytes(1, byteorder="big"))
+        self.printer._raw(text.encode("shift_jis", "ignore"))
         if n != 0x00:
-            self._raw(b"\x1c\x21\x00")
-        self._raw(b"\x1c\x2e")
+            self.printer._raw(b"\x1c\x21\x00")
+        self.printer._raw(b"\x1c\x2e")
 
     def print_sequence(self, sequence: Iterable[Printable]) -> None:
         for elem in sequence:
             if isinstance(elem, TofuText):
                 set_params = elem.properties
-                self.set(**set_params)
+                self.printer.set(**set_params)
                 self._text(elem.text + "\n")
             elif isinstance(elem, TofuImage):
                 source_path = elem.image_path
-                self.image(source_path, **elem.properties)
+                self.printer.image(source_path, **elem.properties)
 
     def __enter__(self) -> None:
-        self.open()
+        self.printer.open()
 
     def __exit__(
         self,
@@ -190,5 +183,5 @@ class Tofu(Network):
         exc_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
-        self.cut()
-        self.close()
+        self.printer.cut()
+        self.printer.close()

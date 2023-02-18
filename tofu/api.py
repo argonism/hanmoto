@@ -9,6 +9,8 @@ from tofu.printer import Tofu, TofuText
 load_dotenv()
 app = FastAPI()
 
+tofu_printer = Tofu.from_network()
+
 
 class PrintStyle(BaseModel):
     invert: bool
@@ -26,9 +28,8 @@ class PrintText(BaseModel):
 
 @app.post("/print_text/")
 def print_text(text: PrintText) -> Dict[str, str]:
-    tofu = Tofu.get_instance()
-    with tofu:
+    with tofu_printer:
         texts = [TofuText(text.content)]
-        tofu.print_sequence(texts)
+        tofu_printer.print_sequence(texts)
 
     return {"status": "success"}

@@ -9,7 +9,7 @@ load_dotenv()
 
 class TestPrintImage(unittest.TestCase):
     def setUp(self) -> None:
-        self.tofu = Tofu.get_instance()
+        self.tofu = Tofu.from_network()
 
     def test_upper(self) -> None:
         images = [
