@@ -4,7 +4,7 @@ import os
 from types import TracebackType
 from typing import Dict, Iterable, Optional, Type, TypeVar, Union
 
-from escpos.printer import Escpos, Network
+from escpos.printer import Dummy, Escpos, Network
 
 T = TypeVar("T", covariant=True)
 
@@ -158,6 +158,12 @@ class Tofu(object):
             raise TofuValueException("host param is needed to be specified")
 
         printer = Network(host, port=port, timeout=timeout)
+        instance = cls(printer)
+        return instance
+
+    @classmethod
+    def from_dummy(cls) -> Tofu:
+        printer = Dummy()
         instance = cls(printer)
         return instance
 
