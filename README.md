@@ -1,6 +1,6 @@
 # hanmoto
 
-hanmoto makes your esc/pos printer accessible through API endpoint and offer you easy to use python esc/pos printer interface.
+hanmoto makes your esc/pos printer accessible through Web API endpoint and offer you easy to use python esc/pos printer interface.
 
 ## Installation
 
