@@ -4,12 +4,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from pydantic import BaseModel
 
-from tofu.printer import Tofu, TofuText
+from hanmoto.printer import Hanmoto, HmtText
 
 load_dotenv()
 app = FastAPI()
 
-tofu_printer = Tofu.from_network()
+printer = Hanmoto.from_network()
 
 
 class PrintStyle(BaseModel):
@@ -28,9 +28,9 @@ class PrintText(BaseModel):
 
 @app.post("/print_text/")
 def print_text(text: PrintText) -> Dict[str, str]:
-    with tofu_printer:
+    with printer:
         properties = text.style.dict()
-        texts = [TofuText(text.content, properties=properties)]
-        tofu_printer.print_sequence(texts)
+        texts = [HmtText(text.content, properties=properties)]
+        printer.print_sequence(texts)
 
     return {"status": "success"}

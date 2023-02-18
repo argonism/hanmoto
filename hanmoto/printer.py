@@ -9,11 +9,11 @@ from escpos.printer import Dummy, Escpos, Network
 T = TypeVar("T", covariant=True)
 
 
-class TofuException(Exception):
+class HmtException(Exception):
     ...
 
 
-class TofuValueException(TofuException):
+class HmtValueException(HmtException):
     def __init__(self, msg: str) -> None:
         self.message = msg
         super().__init__(self.message)
@@ -26,7 +26,7 @@ class Printable(object):
 PROPERTIES_TYPE = Dict[str, Union[bool, int, str]]
 
 
-class TofuImage(Printable):
+class HmtImage(Printable):
     def __init__(
         self, image_path: str, properties: PROPERTIES_TYPE = {}
     ) -> None:
@@ -38,36 +38,36 @@ class TofuImage(Printable):
     def properties(self) -> PROPERTIES_TYPE:
         return self.__properties
 
-    def high_density_vertical(self) -> TofuImage:
+    def high_density_vertical(self) -> HmtImage:
         self.__properties["high_density_vertical"] = True
         return self
 
-    def high_density_horizontal(self) -> TofuImage:
+    def high_density_horizontal(self) -> HmtImage:
         self.__properties["high_density_horizontal"] = True
         return self
 
-    def bitImageRaster(self) -> TofuImage:
+    def bitImageRaster(self) -> HmtImage:
         self.__properties["impl"] = "bitImageRaster"
         return self
 
-    def graphics(self) -> TofuImage:
+    def graphics(self) -> HmtImage:
         self.__properties["impl"] = "graphics"
         return self
 
-    def bitImageColumn(self) -> TofuImage:
+    def bitImageColumn(self) -> HmtImage:
         self.__properties["impl"] = "bitImageColumn"
         return self
 
-    def fragment_height(self, height: int = 960) -> TofuImage:
+    def fragment_height(self, height: int = 960) -> HmtImage:
         self.__properties["fragment_height"] = height
         return self
 
-    def center(self) -> TofuImage:
+    def center(self) -> HmtImage:
         self.__properties["center"] = True
         return self
 
 
-class TofuText(Printable):
+class HmtText(Printable):
     def __init__(self, text: str, properties: PROPERTIES_TYPE = {}) -> None:
         self.text = text
         self.__properties: PROPERTIES_TYPE = properties
@@ -77,74 +77,74 @@ class TofuText(Printable):
     def properties(self) -> PROPERTIES_TYPE:
         return self.__properties
 
-    def center(self) -> TofuText:
+    def center(self) -> HmtText:
         self.__properties["align"] = "center"
         return self
 
-    def right(self) -> TofuText:
+    def right(self) -> HmtText:
         self.__properties["align"] = "right"
         return self
 
-    def left(self) -> TofuText:
+    def left(self) -> HmtText:
         self.__properties["align"] = "left"
         return self
 
-    def font_a(self) -> TofuText:
+    def font_a(self) -> HmtText:
         self.__properties["font"] = 0
         return self
 
-    def font_b(self) -> TofuText:
+    def font_b(self) -> HmtText:
         self.__properties["font"] = 1
         return self
 
-    def bold(self, bold: bool = True) -> TofuText:
+    def bold(self, bold: bool = True) -> HmtText:
         self.__properties["bold"] = bold
         return self
 
-    def underline(self, underline: int = 1) -> TofuText:
+    def underline(self, underline: int = 1) -> HmtText:
         if not (0 <= underline <= 2):
-            raise TofuValueException(
+            raise HmtValueException(
                 "underline value must be 0 <= underline =< 2"
             )
         self.__properties["underline"] = underline
         return self
 
-    def width(self, width: int = 1) -> TofuText:
+    def width(self, width: int = 1) -> HmtText:
         if not (1 <= width <= 8):
-            raise TofuValueException("width value must be 1 <= height =< 8")
+            raise HmtValueException("width value must be 1 <= height =< 8")
         self.__properties["width"] = width
         return self
 
-    def height(self, height: int = 1) -> TofuText:
+    def height(self, height: int = 1) -> HmtText:
         if not (1 <= height <= 8):
-            raise TofuValueException("height value must be 1 <= height =< 8")
+            raise HmtValueException("height value must be 1 <= height =< 8")
         self.__properties["height"] = height
         return self
 
-    def density(self, density: int = 8) -> TofuText:
+    def density(self, density: int = 8) -> HmtText:
         if not (0 <= density <= 8):
-            raise TofuValueException("height value must be 0 <= height =< 8")
+            raise HmtValueException("height value must be 0 <= height =< 8")
         self.__properties["density"] = density
         return self
 
-    def invert(self, invert: bool = True) -> TofuText:
+    def invert(self, invert: bool = True) -> HmtText:
         self.__properties["invert"] = invert
         return self
 
-    def flip(self, flip: bool = True) -> TofuText:
+    def flip(self, flip: bool = True) -> HmtText:
         self.__properties["flip"] = flip
         return self
 
-    def double_width(self, double_width: bool = True) -> TofuText:
+    def double_width(self, double_width: bool = True) -> HmtText:
         self.__properties["double_width"] = double_width
         return self
 
-    def double_height(self, double_height: bool = True) -> TofuText:
+    def double_height(self, double_height: bool = True) -> HmtText:
         self.__properties["double_height"] = double_height
         return self
 
 
-class Tofu(object):
+class Hanmoto(object):
     def __init__(self, printer: Escpos) -> None:
         self.printer = printer
         self.printer.charcode("CP932")
@@ -153,18 +153,21 @@ class Tofu(object):
     @classmethod
     def from_network(
         cls, host: str = "", port: int = 9100, timeout: int = 60
-    ) -> Tofu:
-        if "TOFU_PRINTER_IP" in os.environ and os.environ["TOFU_PRINTER_IP"]:
-            host = os.environ["TOFU_PRINTER_IP"]
+    ) -> Hanmoto:
+        if (
+            "HANMOTO_PRINTER_IP" in os.environ
+            and os.environ["HANMOTO_PRINTER_IP"]
+        ):
+            host = os.environ["HANMOTO_PRINTER_IP"]
         if not host:
-            raise TofuValueException("host param is needed to be specified")
+            raise HmtValueException("host param is needed to be specified")
 
         printer = Network(host, port=port, timeout=timeout)
         instance = cls(printer)
         return instance
 
     @classmethod
-    def from_dummy(cls) -> Tofu:
+    def from_dummy(cls) -> Hanmoto:
         printer = Dummy()
         instance = cls(printer)
         return instance
@@ -185,11 +188,11 @@ class Tofu(object):
 
     def print_sequence(self, sequence: Iterable[Printable]) -> None:
         for elem in sequence:
-            if isinstance(elem, TofuText):
+            if isinstance(elem, HmtText):
                 set_params = elem.properties
                 self.printer.set(**set_params)
                 self._text(elem.text + "\n")
-            elif isinstance(elem, TofuImage):
+            elif isinstance(elem, HmtImage):
                 source_path = elem.image_path
                 self.printer.image(source_path, **elem.properties)
 

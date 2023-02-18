@@ -1,19 +1,19 @@
-# Tofu
+# hanmoto
 
-Tofu makes your esc/pos printer accessible through API endpoint and offer you easy to use python esc/pos printer interface.
+hanmoto makes your esc/pos printer accessible through API endpoint and offer you easy to use python esc/pos printer interface.
 
 ## Installation
 
 install with pip
 ``` bash
-$ pip install tofu-printer
+$ pip install hanmoto
 ```
 
 or you can install with python poetry from source code.
 
 ``` bash
-$ git clone https://github.com/argonism/Tofu.git
-$ cd Tofu
+$ git clone https://github.com/argonism/hanmoto.git
+$ cd hanmoto
 $ poetry install
 ```
 
@@ -21,20 +21,20 @@ $ poetry install
 
 ### printer as API endpoint
 ``` bash
-$ cd Tofu
-$ TOFU_PRINTER_IP={Put your printer IP address here}
-$ uvicorn tofu.api:app --port 1885 --host 0.0.0.0
+$ cd hanmoto
+$ HANMOTO_PRINTER_IP={Put your printer IP address here}
+$ uvicorn hanmoto.api:app --port 1885 --host 0.0.0.0
 ```
 
 ### in python
 
 ``` python
-from tofu.printer import Tofu, TofuText
-tofu_printer = Tofu.from_network()
-with tofu_printer:
+from hanmoto.printer import Hanmoto, hmtText
+hmt = Hanmoto.from_network()
+with hmt:
     texts = [
-        TofuText("hello tofu!").center().bold(),
-        TofuText("tofu is a food prepared by coagulating soy milk.").right()
+        hmtText("hello hanmoto!").center().bold(),
+        hmtText("hanmoto-n").right()
     ]
-    tofu_printer.print_sequence(texts)
+    hmt.print_sequence(texts)
 ```

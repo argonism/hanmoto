@@ -2,22 +2,22 @@ import unittest
 
 from dotenv import load_dotenv
 
-from tofu.printer import Tofu, TofuImage
+from hanmoto.printer import Hanmoto, HmtImage
 
 load_dotenv()
 
 
 class TestPrintImage(unittest.TestCase):
     def setUp(self) -> None:
-        self.tofu = Tofu.from_network()
+        self.hmt = Hanmoto.from_network()
 
     def test_upper(self) -> None:
         images = [
-            TofuImage("tests/resource/Generate!!!.png"),
-            TofuImage("tests/resource/salt.png"),
+            HmtImage("tests/resource/Generate!!!.png"),
+            HmtImage("tests/resource/salt.png"),
         ]
-        with self.tofu:
-            self.tofu.print_sequence(images)
+        with self.hmt:
+            self.hmt.print_sequence(images)
 
 
 if __name__ == "__main__":
