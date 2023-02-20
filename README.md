@@ -1,6 +1,6 @@
 # hanmoto
 
-hanmoto makes your esc/pos printer accessible through Web API endpoint and offer you easy to use python esc/pos printer interface.
+hanmoto makes your esc/pos printer accessible through Web API endpoint and offer you high level python esc/pos printer library.
 
 ## Installation
 
@@ -9,7 +9,7 @@ install with pip
 $ pip install hanmoto
 ```
 
-or you can install with python poetry from source code.
+or you can install with poetry from source code.
 
 ``` bash
 $ git clone https://github.com/argonism/hanmoto.git
@@ -26,15 +26,15 @@ $ HANMOTO_PRINTER_IP={Put your printer IP address here}
 $ uvicorn hanmoto.api:app --port 1885 --host 0.0.0.0
 ```
 
-### in python
+### In python
 
 ``` python
-from hanmoto.printer import Hanmoto, hmtText
+from hanmoto.printer import Hanmoto, hmtText, HmtImage
 hmt = Hanmoto.from_network()
 with hmt:
-    texts = [
+    sequence = [
+        HmtImage("../header.png").center(),
         hmtText("hello hanmoto!").center().bold(),
-        hmtText("hanmoto-n").right()
     ]
-    hmt.print_sequence(texts)
+    hmt.print_sequence(sequence)
 ```
