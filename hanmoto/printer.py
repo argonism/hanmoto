@@ -107,8 +107,8 @@ class Hanmoto(object):
                 self.printer.set(**set_params)
                 self._text(elem.text + "\n")
             elif isinstance(elem, HmtImage):
-                source_path = elem.image_path
-                self.printer.image(source_path, **elem.properties)
+                image_src = elem.image_src
+                self.printer.image(image_src, **elem.properties)
 
     def __enter__(self) -> None:
         self.printer.open()
