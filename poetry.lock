@@ -393,6 +393,32 @@ typing-inspect = ">=0.4.0"
 dev = ["flake8", "hypothesis", "ipython", "mypy (>=0.710)", "portray", "pytest (>=6.2.3)", "simplejson", "types-dataclasses"]
 
 [[package]]
+name = "escpos"
+version = "1.9"
+description = "Python library to manipulate ESC/POS Printers"
+category = "main"
+optional = false
+python-versions = ">=3.5"
+files = [
+    {file = "escpos-1.9.tar.gz", hash = "sha256:5acc126fa5ddd6ec395ccd9c7729545e91d85ebb2f5b17e9ab88e33d6925f501"},
+]
+
+[package.dependencies]
+appdirs = "*"
+argcomplete = "*"
+argparse = "*"
+future = "*"
+Pillow = ">=2.0"
+pyserial = "*"
+python-barcode = ">=0.9.1,<1"
+pyusb = ">=1.0.0"
+PyYAML = "*"
+qrcode = ">=4.0"
+setuptools = "*"
+six = "*"
+viivakoodi = ">=0.8"
+
+[[package]]
 name = "fastapi"
 version = "0.89.1"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
@@ -866,6 +892,18 @@ files = [
 ]
 
 [[package]]
+name = "pypng"
+version = "0.20220715.0"
+description = "Pure Python library for saving and loading PNG images"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "pypng-0.20220715.0-py3-none-any.whl", hash = "sha256:4a43e969b8f5aaafb2a415536c1a8ec7e341cd6a3f957fd5b5f32a4cfeed902c"},
+    {file = "pypng-0.20220715.0.tar.gz", hash = "sha256:739c433ba96f078315de54c0db975aee537cbc3e1d0ae4ed9aab0ca1e427e2c1"},
+]
+
+[[package]]
 name = "pyserial"
 version = "3.5"
 description = "Python Serial Port Extension"
@@ -909,36 +947,6 @@ files = [
 
 [package.extras]
 cli = ["click (>=5.0)"]
-
-[[package]]
-name = "python-escpos"
-version = "3.0a9.dev81+g5e80764"
-description = "Python library to manipulate ESC/POS Printers"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-files = []
-develop = false
-
-[package.dependencies]
-appdirs = "*"
-argcomplete = "*"
-argparse = "*"
-future = "*"
-Pillow = ">=2.0"
-pyserial = "*"
-python-barcode = ">=0.9.1,<1"
-pyusb = ">=1.0.0"
-PyYAML = "*"
-qrcode = ">=4.0"
-setuptools = "*"
-six = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/python-escpos/python-escpos.git"
-reference = "HEAD"
-resolved_reference = "2bc61d9bf8ecd5c6152abdb4b0a647085217f473"
 
 [[package]]
 name = "python-twitter-v2"
@@ -1021,24 +1029,27 @@ files = [
 
 [[package]]
 name = "qrcode"
-version = "7.3.1"
+version = "7.4.2"
 description = "QR Code image generator"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "qrcode-7.3.1.tar.gz", hash = "sha256:375a6ff240ca9bd41adc070428b5dfc1dcfbb0f2507f1ac848f6cded38956578"},
+    {file = "qrcode-7.4.2-py3-none-any.whl", hash = "sha256:581dca7a029bcb2deef5d01068e39093e80ef00b4a61098a2182eac59d01643a"},
+    {file = "qrcode-7.4.2.tar.gz", hash = "sha256:9dd969454827e127dbd93696b20747239e6d540e082937c90f14ac95b30f5845"},
 ]
 
 [package.dependencies]
 colorama = {version = "*", markers = "platform_system == \"Windows\""}
+pypng = "*"
+typing-extensions = "*"
 
 [package.extras]
-all = ["pillow", "pytest", "pytest", "pytest-cov", "tox", "zest.releaser[recommended]"]
-dev = ["pytest", "tox"]
+all = ["pillow (>=9.1.0)", "pytest", "pytest-cov", "tox", "zest.releaser[recommended]"]
+dev = ["pytest", "pytest-cov", "tox"]
 maintainer = ["zest.releaser[recommended]"]
-pil = ["pillow"]
-test = ["pytest", "pytest-cov"]
+pil = ["pillow (>=9.1.0)"]
+test = ["coverage", "pytest"]
 
 [[package]]
 name = "requests"
@@ -1251,6 +1262,17 @@ docs = ["Sphinx (>=4.1.2,<4.2.0)", "sphinx-rtd-theme (>=0.5.2,<0.6.0)", "sphinxc
 test = ["Cython (>=0.29.32,<0.30.0)", "aiohttp", "flake8 (>=3.9.2,<3.10.0)", "mypy (>=0.800)", "psutil", "pyOpenSSL (>=22.0.0,<22.1.0)", "pycodestyle (>=2.7.0,<2.8.0)"]
 
 [[package]]
+name = "viivakoodi"
+version = "0.8.0"
+description = "Create standard barcodes with Python. No external modules needed (optional PIL support included)."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "viivakoodi-0.8.0.tar.gz", hash = "sha256:670a35774559b25abdb089d58fb8e67e4ee9618f385b8418e5027ab860290e39"},
+]
+
+[[package]]
 name = "watchfiles"
 version = "0.18.1"
 description = "Simple, modern and high performance file watching and code reload in python."
@@ -1363,4 +1385,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "6dea9f2c5e2088139b00c4de1dff3f5c96e1d4fdbd6ab9bbcf56ec84061b2c35"
+content-hash = "be0e6569be84051d766d03536cd0a8614d7d903694e47abb18ced12b4cea9d90"

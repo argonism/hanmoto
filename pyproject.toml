@@ -1,16 +1,18 @@
 [tool.poetry]
 name = "hanmoto"
-version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+version = "0.0.2"
+authors = ["Kota Usuha <kouta528bado@yahoo.co.jp>"]
+description = "hanmoto makes your esc/pos printer accessible through Web API endpoint and offers you easy to use python esc/pos printer interface."
+readme = "README.md"
+repository = "https://github.com/argonism/hanmoto.git"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-python-escpos = {git = "https://github.com/python-escpos/python-escpos.git"}
 fastapi = "^0.89.1"
 uvicorn = {extras = ["standard"], version = "^0.20.0"}
 python-dotenv = "^0.21.0"
 python-twitter-v2 = "^0.8.1"
+escpos = "^1.9"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
