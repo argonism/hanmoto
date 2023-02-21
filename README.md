@@ -32,7 +32,7 @@ $ uvicorn hanmoto.api:app --port 1885 --host 0.0.0.0
 from hanmoto.printer import Hanmoto, hmtText, HmtImage
 hmt = Hanmoto.from_network()
 # set ip addr to environment varieble HANMOTO_PRINTER_IP
-# or you can pass Hanmoto.from_network()
+# or you can pass it directly like Hanmoto.from_network(192.168.1.13)
 with hmt:
     sequence = [
         HmtImage("../header.png").center(),
