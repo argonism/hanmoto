@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from typing import Union
+
+from PIL import Image
+
 from ._printable import PROPERTIES_TYPE, Printable
 
 
@@ -24,9 +28,11 @@ class HmtImage(Printable):
     """
 
     def __init__(
-        self, image_path: str, properties: PROPERTIES_TYPE = {}
+        self,
+        image_src: Union[str, Image.Image],
+        properties: PROPERTIES_TYPE = {},
     ) -> None:
-        self.image_path = image_path
+        self.image_src = image_src
         self.__properties: PROPERTIES_TYPE = properties
         super().__init__()
 
