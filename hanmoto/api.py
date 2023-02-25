@@ -1,6 +1,5 @@
 import base64
 from abc import abstractmethod
-from enum import Enum
 from io import BytesIO
 from typing import Dict, List
 
@@ -9,7 +8,14 @@ from fastapi import FastAPI
 from PIL import Image
 from pydantic import BaseModel
 
-from hanmoto.printer import Hanmoto, HmtImage, HmtText, Printable
+from hanmoto import (
+    Hanmoto,
+    HmtImage,
+    HmtImageStyle,
+    HmtText,
+    HmtTextStyle,
+    Printable,
+)
 
 load_dotenv()
 app = FastAPI()
@@ -23,46 +29,18 @@ class PrintableModel(BaseModel):
         raise NotImplementedError()
 
 
-class TextStyle(BaseModel):
-    align: str = "left"
-    font: int = 0
-    bold: bool = False
-    underline: int = 0
-    width: int = 1
-    height: int = 1
-    density: int = 8
-    invert: bool = False
-    flip: bool = False
-    double_width: bool = False
-    double_height: bool = False
-
-
 class TextModel(PrintableModel):
     content: str
-    style: TextStyle = TextStyle()
+    style: HmtTextStyle = HmtTextStyle()
 
     def to_hmt(self) -> Printable:
         return HmtText(self.content, properties=self.style.dict())
 
 
-class ImageImpl(str, Enum):
-    bitImageRaster = "bitImageRaster"
-    graphics = "graphics"
-    bitImageColumn = "bitImageColumn"
-
-
-class ImageStyle(BaseModel):
-    center: bool = False
-    high_density_vertical: bool = False
-    high_density_horizontal: bool = False
-    impl: ImageImpl = ImageImpl.bitImageRaster
-    fragment_height: int = 960
-
-
 class ImageModel(PrintableModel):
     base64: str = ""
     image_src: str = ""
-    style: ImageStyle = ImageStyle()
+    style: HmtImageStyle = HmtImageStyle()
 
     def to_hmt(self) -> Printable:
         if self.base64:
@@ -98,7 +76,6 @@ def print_text(text: TextModel) -> Dict[str, str]:
 
 @app.post("/print/image")
 def print_image(image: ImageModel) -> Dict[str, str]:
-    print(image)
     with printer:
         printer.print_sequence([image.to_hmt()])
 

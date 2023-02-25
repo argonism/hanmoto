@@ -8,5 +8,3 @@ class Printable(metaclass=abc.ABCMeta):
     """
     Abstract base class for printable objects that can be passed to Hanmoto.
     """
-
-    ...
