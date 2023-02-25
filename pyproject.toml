@@ -13,6 +13,7 @@ uvicorn = {extras = ["standard"], version = "^0.20.0"}
 python-dotenv = "^0.21.0"
 python-twitter-v2 = "^0.8.1"
 escpos = "^1.9"
+pytest-mock = "^3.10.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "^22.12.0"
