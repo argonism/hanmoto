@@ -6,7 +6,7 @@ from typing import Dict, List
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from PIL import Image
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
 
 from hanmoto import (
     Hanmoto,
@@ -16,11 +16,25 @@ from hanmoto import (
     HmtTextStyle,
     Printable,
 )
+from hanmoto.options import load_conf_from_cli
+from hanmoto.printer import HmtConf
+
+
+class Settings(BaseSettings):
+    app_name: str = "net"
+    net_host: str = ""
+
 
 load_dotenv()
 app = FastAPI()
+hmt_conf = load_conf_from_cli()
 
-printer = Hanmoto.from_network()
+printer = None
+
+
+@app.on_event("startup")
+async def startup_event() -> None:
+    printer = Hanmoto.from_conf(hmt_conf)
 
 
 class PrintableModel(BaseModel):

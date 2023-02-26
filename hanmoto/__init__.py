@@ -8,4 +8,4 @@ from hanmoto.printables import (
     HmtTextStyle,
     Printable,
 )
-from hanmoto.printer import Hanmoto
+from hanmoto.printer import Hanmoto, HmtNetworkConf, HmtPrinterConf

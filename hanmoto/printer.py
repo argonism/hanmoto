@@ -1,14 +1,37 @@
 from __future__ import annotations
 
 import os
+from enum import Enum
 from types import TracebackType
-from typing import Iterable, Optional, Type
+from typing import Iterable, Optional, Type, Union
 
 from escpos.printer import Dummy, Escpos, Network
+from pydantic import BaseModel
 
 from .exceptions import HmtValueException
 from .printables import HmtImage, HmtText, Printable
 
+
+class HmtPrinterType(Enum):
+    network = "network"
+    dummy = "dummy"
+
+    @classmethod
+    def get_types(cls) -> list:
+        return [i.name for i in cls]
+
+
+class HmtNetworkConf(BaseModel):
+    host: str = ""
+    port: int = 9100
+    timeout: int = 60
+
+
+class HmtPrinterConf(BaseModel):
+    printer_type: HmtPrinterType = HmtPrinterType.network
+    conf: HmtNetworkConf = HmtNetworkConf()
+
+class HmtConf(BaseModel)
 
 class Hanmoto(object):
     """
@@ -30,6 +53,16 @@ class Hanmoto(object):
         self.printer = printer
         self.printer.charcode("CP932")
         self.printer._raw(b"\x1c\x43\x01")
+
+    @classmethod
+    def from_conf(cls, conf: HmtConf) -> Hanmoto:
+        printer_type = conf.printer_type
+        if printer_type == "network":
+            return cls.from_network(**conf.conf.dict())
+        elif printer_type == "dummy":
+            return cls.from_dummy()
+        else:
+            raise HmtValueException(f"Unknown printer type: {printer_type}")
 
     @classmethod
     def from_network(
@@ -120,4 +153,5 @@ class Hanmoto(object):
         traceback: Optional[TracebackType],
     ) -> None:
         self.printer.cut()
+        self.printer.close()
         self.printer.close()
