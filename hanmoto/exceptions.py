@@ -14,3 +14,13 @@ class HmtValueException(HmtException):
     def __init__(self, msg: str) -> None:
         self.message = msg
         super().__init__(self.message)
+
+
+class HmtDuplicateInitializeException(HmtException):
+    """
+    Hanmoto Value Exception.
+    """
+
+    def __init__(self, msg: str) -> None:
+        self.message = msg
+        super().__init__(self.message)

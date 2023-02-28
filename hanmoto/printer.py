@@ -3,12 +3,12 @@ from __future__ import annotations
 import os
 from enum import Enum
 from types import TracebackType
-from typing import Iterable, Optional, Type, Union
+from typing import Iterable, List, Optional, Type
 
 from escpos.printer import Dummy, Escpos, Network
 from pydantic import BaseModel
 
-from .exceptions import HmtValueException
+from .exceptions import HmtDuplicateInitializeException, HmtValueException
 from .printables import HmtImage, HmtText, Printable
 
 
@@ -31,7 +31,10 @@ class HmtPrinterConf(BaseModel):
     printer_type: HmtPrinterType = HmtPrinterType.network
     conf: HmtNetworkConf = HmtNetworkConf()
 
-class HmtConf(BaseModel)
+
+class HmtConf(BaseModel):
+    printer_conf: HmtPrinterConf = HmtPrinterConf()
+
 
 class Hanmoto(object):
     """
@@ -56,9 +59,10 @@ class Hanmoto(object):
 
     @classmethod
     def from_conf(cls, conf: HmtConf) -> Hanmoto:
-        printer_type = conf.printer_type
+        printer_conf = conf.printer_conf
+        printer_type = printer_conf.printer_type
         if printer_type == "network":
-            return cls.from_network(**conf.conf.dict())
+            return cls.from_network(**printer_conf.conf.dict())
         elif printer_type == "dummy":
             return cls.from_dummy()
         else:
@@ -155,3 +159,23 @@ class Hanmoto(object):
         self.printer.cut()
         self.printer.close()
         self.printer.close()
+
+
+class HmtManager(object):
+    def __new__(cls) -> HmtManager:
+        if not hasattr(cls, "instance"):
+            cls.__instance = super(HmtManager, cls).__new__(cls)
+        else:
+            class_name = cls.__name__
+            raise HmtDuplicateInitializeException(
+                f"Re-Initializing {class_name} class. \
+                  Use get_instance instead to access {class_name} instance"
+            )
+        return cls.__instance
+
+    def __init__(self, config: HmtConf) -> None:
+        self.config = config
+
+    @classmethod
+    def get_instance(cls) -> HmtManager:
+        return cls.__instance

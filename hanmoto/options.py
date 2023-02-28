@@ -1,7 +1,12 @@
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 
 from hanmoto.exceptions import HmtValueException
-from hanmoto.printer import HmtNetworkConf, HmtPrinterConf, HmtPrinterType
+from hanmoto.printer import (
+    HmtConf,
+    HmtNetworkConf,
+    HmtPrinterConf,
+    HmtPrinterType,
+)
 
 
 def subparse_network(subparsers: _SubParsersAction) -> None:
@@ -50,18 +55,24 @@ def parse_options() -> Namespace:
     return args
 
 
-def load_conf_from_cli() -> HmtPrinterConf:
+def load_conf_from_cli() -> HmtConf:
     args = parse_options()
     args_dict = vars(args)
-    if args_dict.pop("printer_type") is None:
-        raise HmtValueException(f"No printer type specified")
-    printer_type = HmtPrinterType[args_dict.pop("printer_type")]
+    printer_type_str = args_dict.pop("printer_type")
+    if printer_type_str is None:
+        raise HmtValueException(
+            f"No printer type specified. Choose printer type you goning to use from:{HmtPrinterType.get_types()}"
+        )
+    printer_type = HmtPrinterType[printer_type_str]
+    printer_conf = HmtPrinterConf()
     if printer_type is HmtPrinterType.network:
-        return HmtPrinterConf(
+        printer_conf = HmtPrinterConf(
             printer_type=printer_type, conf=HmtNetworkConf(**args_dict)
         )
     else:
         raise HmtValueException(f"Unknown printer type: {printer_type}")
+
+    return HmtConf(printer_conf=printer_conf)
 
 
 if __name__ == "__main__":

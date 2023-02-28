@@ -29,11 +29,12 @@ load_dotenv()
 app = FastAPI()
 hmt_conf = load_conf_from_cli()
 
-printer = None
+printer: Hanmoto
 
 
 @app.on_event("startup")
 async def startup_event() -> None:
+    global printer
     printer = Hanmoto.from_conf(hmt_conf)
 
 
@@ -48,7 +49,7 @@ class TextModel(PrintableModel):
     style: HmtTextStyle = HmtTextStyle()
 
     def to_hmt(self) -> Printable:
-        return HmtText(self.content, properties=self.style.dict())
+        return HmtText(self.content, properties=self.style)
 
 
 class ImageModel(PrintableModel):
@@ -64,7 +65,7 @@ class ImageModel(PrintableModel):
             image = self.image_src
         else:
             raise Exception("")
-        return HmtImage(image, properties=self.style.dict())
+        return HmtImage(image, properties=self.style)
 
 
 class Sequence(BaseModel):
