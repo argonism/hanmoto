@@ -145,24 +145,3 @@ def test_image_base64_with_style(
     patch_printer.assert_has_calls(calls)
     assert response.status_code == 200
     assert response.json() == {"status": "success"}
-
-
-# def test_print_sequence(
-#     patch_printer: MagicMock, mocker: MockerFixture
-# ) -> None:
-#     img_path = get_resource_path("salt.png")
-#     base64_str = base64.b64encode(img_path.read_bytes()).decode("utf-8")
-#     pil_image = Image.open(BytesIO(base64.b64decode(base64_str)))
-
-#     response = client.post(
-#         "/print/image",
-#         json={"base64": base64_str, "style": style.dict()},
-#     )
-#     calls = [
-#         mocker.call.__enter__(),
-#         mocker.call.print_sequence([HmtImage(pil_image, properties=style)]),
-#         mocker.call.__exit__(None, None, None),
-#     ]
-#     patch_printer.assert_has_calls(calls)
-#     assert response.status_code == 200
-#     assert response.json() == {"status": "success"}
