@@ -4,7 +4,7 @@ from io import BytesIO
 from typing import Dict, List, Literal, Optional, Union
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from PIL import Image
 from pydantic import BaseModel, BaseSettings
 
@@ -98,7 +98,10 @@ def setup_app(app: FastAPI) -> None:
                     )
 
         body = await request.json()
-        validate_sequence(body["contents"])
+        try:
+            validate_sequence(body["contents"])
+        except HmtWebAPISequenceException as e:
+            raise HTTPException(status_code=422, detail=e.message)
 
         with printer:
             printables = [elem.to_hmt() for elem in sequence.contents]
