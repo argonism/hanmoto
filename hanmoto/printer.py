@@ -40,8 +40,15 @@ class HmtPrinterConf(BaseModel):
     conf: HmtPrinterTypeConf = HmtPrinterTypeConf()
 
 
+class HmtApiConf(BaseModel):
+    api_host: str = "127.0.0.1"
+    port: int = 10020
+    reload: bool = False
+
+
 class HmtConf(BaseModel):
     printer_conf: HmtPrinterConf = HmtPrinterConf()
+    api_conf: HmtApiConf = HmtApiConf()
 
 
 class Hanmoto(object):
@@ -149,11 +156,11 @@ class Hanmoto(object):
         for elem in sequence:
             if isinstance(elem, HmtText):
                 set_params = elem.properties
-                self.printer.set(**set_params)
+                self.printer.set(**set_params.dict())
                 self._text(elem.text + "\n")
             elif isinstance(elem, HmtImage):
                 image_src = elem.image_src
-                self.printer.image(image_src, **elem.properties)
+                self.printer.image(image_src, **elem.properties.dict())
 
     def __enter__(self) -> None:
         self.printer.open()
@@ -165,7 +172,6 @@ class Hanmoto(object):
         traceback: Optional[TracebackType],
     ) -> None:
         self.printer.cut()
-        self.printer.close()
         self.printer.close()
 
 

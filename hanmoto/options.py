@@ -1,13 +1,5 @@
 from argparse import ArgumentParser, Namespace, _SubParsersAction
 
-from hanmoto.exceptions import HmtValueException
-from hanmoto.printer import (
-    HmtConf,
-    HmtNetworkConf,
-    HmtPrinterConf,
-    HmtPrinterType,
-)
-
 
 def subparse_network(subparsers: _SubParsersAction) -> None:
     parser_network = subparsers.add_parser(
@@ -15,8 +7,7 @@ def subparse_network(subparsers: _SubParsersAction) -> None:
     )
 
     parser_network.add_argument(
-        "--host",
-        default="",
+        "host",
         type=str,
         help="printer hostname or ip addr",
     )
@@ -42,39 +33,40 @@ def subparse_dummy(subparsers: _SubParsersAction) -> None:
     subparsers.add_parser("dummy", help="use dummy printer")
 
 
+def server_options(parser: ArgumentParser) -> None:
+    parser.add_argument(
+        "--api_host",
+        default="127.0.0.1",
+        type=str,
+        help="fastapi app server port to listen",
+    )
+    parser.add_argument(
+        "-p",
+        "--port",
+        default=10002,
+        type=int,
+        help="fastapi app server port to listen",
+    )
+    parser.add_argument(
+        "--reload",
+        default=False,
+        action="store_true",
+        help="same as fastapi --reload option. \
+            if true, source code changes will be reflected immediately",
+    )
+
+
 def parse_options() -> Namespace:
     parser = ArgumentParser(
         description="hanmoto makes your esc/pos printer accessible through Web API endpoint"
     )
+    server_options(parser)
+
     subparsers = parser.add_subparsers(
         dest="printer_type", help="printer connection type"
     )
     subparse_network(subparsers)
+    subparse_dummy(subparsers)
 
     args = parser.parse_args()
     return args
-
-
-def load_conf_from_cli() -> HmtConf:
-    args = parse_options()
-    args_dict = vars(args)
-    printer_type_str = args_dict.pop("printer_type")
-    if printer_type_str is None:
-        raise HmtValueException(
-            f"No printer type specified. Choose printer type you goning to use from:{HmtPrinterType.get_types()}"
-        )
-    printer_type = HmtPrinterType[printer_type_str]
-    printer_conf = HmtPrinterConf()
-    if printer_type is HmtPrinterType.network:
-        printer_conf = HmtPrinterConf(
-            printer_type=printer_type, conf=HmtNetworkConf(**args_dict)
-        )
-    else:
-        raise HmtValueException(f"Unknown printer type: {printer_type}")
-
-    return HmtConf(printer_conf=printer_conf)
-
-
-if __name__ == "__main__":
-
-    print(load_conf_from_cli())

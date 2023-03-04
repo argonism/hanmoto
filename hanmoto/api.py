@@ -1,7 +1,7 @@
 import base64
 from abc import abstractmethod
 from io import BytesIO
-from typing import Dict, List
+from typing import Dict, List, Optional, Union
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -16,7 +16,6 @@ from hanmoto import (
     HmtTextStyle,
     Printable,
 )
-from hanmoto.options import load_conf_from_cli
 from hanmoto.printer import HmtConf
 
 
@@ -46,10 +45,13 @@ class PrintableModel(BaseModel):
 
 class TextModel(PrintableModel):
     content: str
-    style: HmtTextStyle = HmtTextStyle()
+    style: Optional[HmtTextStyle] = None
 
     def to_hmt(self) -> Printable:
-        return HmtText(self.content, properties=self.style)
+        if self.style is None:
+            return HmtText(self.content)
+        else:
+            return HmtText(self.content, properties=self.style)
 
 
 class ImageModel(PrintableModel):
@@ -69,7 +71,7 @@ class ImageModel(PrintableModel):
 
 
 class Sequence(BaseModel):
-    contents: List[PrintableModel]
+    contents: List[Union[ImageModel, TextModel]]
 
 
 def setup_app(app: FastAPI) -> None:
