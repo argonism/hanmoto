@@ -21,15 +21,23 @@ class HmtPrinterType(Enum):
         return [i.name for i in cls]
 
 
-class HmtNetworkConf(BaseModel):
+class HmtPrinterTypeConf(BaseModel):
+    ...
+
+
+class HmtNetworkConf(HmtPrinterTypeConf):
     host: str = ""
     port: int = 9100
     timeout: int = 60
 
 
+class HmtDummyConf(HmtPrinterTypeConf):
+    ...
+
+
 class HmtPrinterConf(BaseModel):
     printer_type: HmtPrinterType = HmtPrinterType.network
-    conf: HmtNetworkConf = HmtNetworkConf()
+    conf: HmtPrinterTypeConf = HmtPrinterTypeConf()
 
 
 class HmtConf(BaseModel):
@@ -61,9 +69,9 @@ class Hanmoto(object):
     def from_conf(cls, conf: HmtConf) -> Hanmoto:
         printer_conf = conf.printer_conf
         printer_type = printer_conf.printer_type
-        if printer_type == "network":
+        if printer_type == HmtPrinterType.network:
             return cls.from_network(**printer_conf.conf.dict())
-        elif printer_type == "dummy":
+        elif printer_type == HmtPrinterType.dummy:
             return cls.from_dummy()
         else:
             raise HmtValueException(f"Unknown printer type: {printer_type}")

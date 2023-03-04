@@ -26,16 +26,16 @@ class Settings(BaseSettings):
 
 
 load_dotenv()
-app = FastAPI()
-hmt_conf = load_conf_from_cli()
 
 printer: Hanmoto
 
 
-@app.on_event("startup")
-async def startup_event() -> None:
+def load_app(conf: HmtConf) -> FastAPI:
     global printer
-    printer = Hanmoto.from_conf(hmt_conf)
+    app = FastAPI()
+    setup_app(app)
+    printer = Hanmoto.from_conf(conf)
+    return app
 
 
 class PrintableModel(BaseModel):
@@ -72,26 +72,25 @@ class Sequence(BaseModel):
     contents: List[PrintableModel]
 
 
-@app.post("/print/sequence")
-def print_sequence(sequence: Sequence) -> Dict[str, str]:
-    with printer:
-        printables = [elem.to_hmt() for elem in sequence.contents]
-        printer.print_sequence(printables)
+def setup_app(app: FastAPI) -> None:
+    @app.post("/print/sequence")
+    def print_sequence(sequence: Sequence) -> Dict[str, str]:
+        with printer:
+            printables = [elem.to_hmt() for elem in sequence.contents]
+            printer.print_sequence(printables)
 
-    return {"status": "success"}
+        return {"status": "success"}
 
+    @app.post("/print/text")
+    def print_text(text: TextModel) -> Dict[str, str]:
+        with printer:
+            printer.print_sequence([text.to_hmt()])
 
-@app.post("/print/text")
-def print_text(text: TextModel) -> Dict[str, str]:
-    with printer:
-        printer.print_sequence([text.to_hmt()])
+        return {"status": "success"}
 
-    return {"status": "success"}
+    @app.post("/print/image")
+    def print_image(image: ImageModel) -> Dict[str, str]:
+        with printer:
+            printer.print_sequence([image.to_hmt()])
 
-
-@app.post("/print/image")
-def print_image(image: ImageModel) -> Dict[str, str]:
-    with printer:
-        printer.print_sequence([image.to_hmt()])
-
-    return {"status": "success"}
+        return {"status": "success"}
