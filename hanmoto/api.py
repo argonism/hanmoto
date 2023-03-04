@@ -1,10 +1,10 @@
 import base64
 from abc import abstractmethod
 from io import BytesIO
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Literal, Optional, Union
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from PIL import Image
 from pydantic import BaseModel, BaseSettings
 
@@ -15,6 +15,11 @@ from hanmoto import (
     HmtText,
     HmtTextStyle,
     Printable,
+)
+from hanmoto.exceptions import (
+    HmtValueException,
+    HmtWebAPIException,
+    HmtWebAPISequenceException,
 )
 from hanmoto.printer import HmtConf
 
@@ -44,6 +49,7 @@ class PrintableModel(BaseModel):
 
 
 class TextModel(PrintableModel):
+    type: Literal["text"] = "text"
     content: str
     style: Optional[HmtTextStyle] = None
 
@@ -55,6 +61,7 @@ class TextModel(PrintableModel):
 
 
 class ImageModel(PrintableModel):
+    type: Literal["image"] = "image"
     base64: str = ""
     image_src: str = ""
     style: HmtImageStyle = HmtImageStyle()
@@ -66,7 +73,7 @@ class ImageModel(PrintableModel):
         elif self.image_src:
             image = self.image_src
         else:
-            raise Exception("")
+            raise HmtValueException("Specify image source")
         return HmtImage(image, properties=self.style)
 
 
@@ -76,7 +83,23 @@ class Sequence(BaseModel):
 
 def setup_app(app: FastAPI) -> None:
     @app.post("/print/sequence")
-    def print_sequence(sequence: Sequence) -> Dict[str, str]:
+    async def print_sequence(
+        sequence: Sequence, request: Request
+    ) -> Dict[str, str]:
+        def validate_sequence(sequence_list: List[Dict]) -> None:
+            for i, content in enumerate(sequence_list):
+                if "type" not in content:
+                    raise HmtWebAPISequenceException(
+                        (
+                            f"content: {content} (at index {i}) has no 'type' field. "
+                            "Please specify type field for all content in 'contents'. "
+                            "e.g. '{{'type': 'text', 'content': 'string'}}'"
+                        )
+                    )
+
+        body = await request.json()
+        validate_sequence(body["contents"])
+
         with printer:
             printables = [elem.to_hmt() for elem in sequence.contents]
             printer.print_sequence(printables)
