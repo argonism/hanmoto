@@ -1,3 +1,11 @@
+from hanmoto.config import (
+    HmtApiConf,
+    HmtConf,
+    HmtDummyConf,
+    HmtNetworkConf,
+    HmtPrinterConf,
+    HmtPrinterType,
+)
 from hanmoto.exceptions import HmtException, HmtValueException
 from hanmoto.printables import (
     PROPERTIES_TYPE,
@@ -8,4 +16,4 @@ from hanmoto.printables import (
     HmtTextStyle,
     Printable,
 )
-from hanmoto.printer import Hanmoto, HmtNetworkConf, HmtPrinterConf
+from hanmoto.printer import Hanmoto

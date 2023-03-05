@@ -1,9 +1,7 @@
 import uvicorn
 
 from hanmoto.api import load_app
-from hanmoto.exceptions import HmtValueException
-from hanmoto.options import parse_options
-from hanmoto.printer import (
+from hanmoto.config import (
     HmtApiConf,
     HmtConf,
     HmtDummyConf,
@@ -11,6 +9,8 @@ from hanmoto.printer import (
     HmtPrinterConf,
     HmtPrinterType,
 )
+from hanmoto.exceptions import HmtValueException
+from hanmoto.options import parse_options
 
 
 def load_conf_from_cli() -> HmtConf:

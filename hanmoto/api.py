@@ -16,11 +16,7 @@ from hanmoto import (
     HmtTextStyle,
     Printable,
 )
-from hanmoto.exceptions import (
-    HmtValueException,
-    HmtWebAPIException,
-    HmtWebAPISequenceException,
-)
+from hanmoto.exceptions import HmtValueException, HmtWebAPISequenceException
 from hanmoto.printer import HmtConf
 
 

@@ -17,8 +17,8 @@ from hanmoto import (
 )
 from hanmoto.api import load_app
 from hanmoto.exceptions import HmtWebAPISequenceException
-from tests.api.fixtures import create_test_hmtconf, patch_printer
-from tests.util import get_resource_path
+from tests.api.fixtures import patch_printer
+from tests.util import create_test_hmtconf, get_resource_path
 
 conf = create_test_hmtconf()
 app = load_app(conf)
