@@ -173,23 +173,3 @@ class Hanmoto(object):
     ) -> None:
         self.printer.cut()
         self.printer.close()
-
-
-class HmtManager(object):
-    def __new__(cls) -> HmtManager:
-        if not hasattr(cls, "instance"):
-            cls.__instance = super(HmtManager, cls).__new__(cls)
-        else:
-            class_name = cls.__name__
-            raise HmtDuplicateInitializeException(
-                f"Re-Initializing {class_name} class. \
-                  Use get_instance instead to access {class_name} instance"
-            )
-        return cls.__instance
-
-    def __init__(self, config: HmtConf) -> None:
-        self.config = config
-
-    @classmethod
-    def get_instance(cls) -> HmtManager:
-        return cls.__instance
