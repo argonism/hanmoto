@@ -38,16 +38,18 @@ class Hanmoto(object):
         printer_type = printer_conf.printer_type
         localizer = HmtLocalizerEnum.get_localizer(printer_conf.lang)
         if printer_type == HmtPrinterType.network:
-            return cls.from_network(**printer_conf.conf.dict(), lang=localizer)
+            return cls.from_network(
+                **printer_conf.conf.dict(), localizer=localizer
+            )
         elif printer_type == HmtPrinterType.dummy:
-            return cls.from_dummy()
+            return cls.from_dummy(localizer=localizer)
         else:
             raise HmtValueException(f"Unknown printer type: {printer_type}")
 
     @classmethod
     def from_network(
         cls,
-        lang: HmtLocalizerEnum,
+        localizer: HmtLocalizerEnum,
         host: str = "",
         port: int = 9100,
         timeout: int = 60,
@@ -82,11 +84,14 @@ class Hanmoto(object):
             raise HmtValueException("host param is needed to be specified")
 
         printer = Network(host, port=port, timeout=timeout)
-        instance = cls(printer, lang)
+        instance = cls(printer, localizer)
         return instance
 
     @classmethod
-    def from_dummy(cls) -> Hanmoto:
+    def from_dummy(
+        cls,
+        localizer: HmtLocalizerEnum,
+    ) -> Hanmoto:
         """
         Initialize Hanmoto with dummy printer
 
@@ -100,7 +105,7 @@ class Hanmoto(object):
         https://github.com/python-escpos/python-escpos/blob/master/src/escpos/printer.py#L330
         """
         printer = Dummy()
-        localizer = HmtLocalizerEnum.en
+        printer.open = lambda: None
         instance = cls(printer, localizer)
         return instance
 
