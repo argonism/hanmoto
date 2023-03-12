@@ -104,20 +104,6 @@ class Hanmoto(object):
         instance = cls(printer, localizer)
         return instance
 
-    def _text(self, text: str, dw: bool = False, dh: bool = False) -> None:
-        self.printer._raw(b"\x1c\x26")
-        n = 0x00
-        if dw:
-            n += 0x04
-        if dh:
-            n += 0x08
-        if n != 0x00:
-            self.printer._raw(b"\x1c\x21" + n.to_bytes(1, byteorder="big"))
-        self.printer._raw(text.encode("shift_jis", "ignore"))
-        if n != 0x00:
-            self.printer._raw(b"\x1c\x21\x00")
-        self.printer._raw(b"\x1c\x2e")
-
     def print_sequence(self, sequence: Iterable[Printable]) -> None:
         for elem in sequence:
             if isinstance(elem, HmtText):
