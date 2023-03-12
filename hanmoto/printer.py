@@ -8,6 +8,7 @@ from escpos.printer import Dummy, Escpos, Network
 
 from .config import HmtConf, HmtPrinterType
 from .exceptions import HmtValueException
+from .localizer import HmtLocalizerEnum
 from .printables import HmtImage, HmtText, Printable
 
 
@@ -27,17 +28,17 @@ class Hanmoto(object):
         printer class from escpos package
     """
 
-    def __init__(self, printer: Escpos) -> None:
+    def __init__(self, printer: Escpos, localizer: HmtLocalizerEnum) -> None:
         self.printer = printer
-        self.printer.charcode("CP932")
-        self.printer._raw(b"\x1c\x43\x01")
+        self.localizer = localizer.value(self.printer)
 
     @classmethod
     def from_conf(cls, conf: HmtConf) -> Hanmoto:
         printer_conf = conf.printer_conf
         printer_type = printer_conf.printer_type
+        localizer = HmtLocalizerEnum.get_localizer(printer_conf.lang)
         if printer_type == HmtPrinterType.network:
-            return cls.from_network(**printer_conf.conf.dict())
+            return cls.from_network(**printer_conf.conf.dict(), lang=localizer)
         elif printer_type == HmtPrinterType.dummy:
             return cls.from_dummy()
         else:
@@ -45,7 +46,11 @@ class Hanmoto(object):
 
     @classmethod
     def from_network(
-        cls, host: str = "", port: int = 9100, timeout: int = 60
+        cls,
+        lang: HmtLocalizerEnum,
+        host: str = "",
+        port: int = 9100,
+        timeout: int = 60,
     ) -> Hanmoto:
         """
         Initialize Hanmoto with network connected printer
@@ -77,7 +82,7 @@ class Hanmoto(object):
             raise HmtValueException("host param is needed to be specified")
 
         printer = Network(host, port=port, timeout=timeout)
-        instance = cls(printer)
+        instance = cls(printer, lang)
         return instance
 
     @classmethod
@@ -95,7 +100,8 @@ class Hanmoto(object):
         https://github.com/python-escpos/python-escpos/blob/master/src/escpos/printer.py#L330
         """
         printer = Dummy()
-        instance = cls(printer)
+        localizer = HmtLocalizerEnum.en
+        instance = cls(printer, localizer)
         return instance
 
     def _text(self, text: str, dw: bool = False, dh: bool = False) -> None:
@@ -115,9 +121,7 @@ class Hanmoto(object):
     def print_sequence(self, sequence: Iterable[Printable]) -> None:
         for elem in sequence:
             if isinstance(elem, HmtText):
-                set_params = elem.properties
-                self.printer.set(**set_params.dict())
-                self._text(elem.text + "\n")
+                self.localizer.text(elem)
             elif isinstance(elem, HmtImage):
                 image_src = elem.image_src
                 self.printer.image(image_src, **elem.properties.dict())

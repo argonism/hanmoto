@@ -10,6 +10,7 @@ from hanmoto.config import (
     HmtPrinterType,
 )
 from hanmoto.exceptions import HmtValueException
+from hanmoto.localizer import HmtLocalizerEnum
 from hanmoto.options import parse_options
 
 
@@ -25,11 +26,15 @@ def load_conf_from_cli() -> HmtConf:
     printer_conf = HmtPrinterConf()
     if printer_type is HmtPrinterType.network:
         printer_conf = HmtPrinterConf(
-            printer_type=printer_type, conf=HmtNetworkConf(**args_dict)
+            printer_type=printer_type,
+            conf=HmtNetworkConf(**args_dict),
+            lang=args.lang,
         )
     elif printer_type is HmtPrinterType.dummy:
         printer_conf = HmtPrinterConf(
-            printer_type=printer_type, conf=HmtDummyConf(**args_dict)
+            printer_type=printer_type,
+            conf=HmtDummyConf(**args_dict),
+            lang=args.lang,
         )
     else:
         raise HmtValueException(f"Unknown printer type: {printer_type}")
@@ -45,6 +50,4 @@ if __name__ == "__main__":
     uvicorn.run(
         app,
         host=api_conf.api_host,
-        reload=api_conf.reload,
-        reload_dirs="hanmoto",
     )

@@ -31,6 +31,7 @@ class HmtDummyConf(HmtPrinterTypeConf):
 class HmtPrinterConf(BaseModel):
     printer_type: HmtPrinterType = HmtPrinterType.network
     conf: HmtPrinterTypeConf = HmtPrinterTypeConf()
+    lang: str = "en"
 
 
 class HmtApiConf(BaseModel):

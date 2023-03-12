@@ -48,11 +48,7 @@ def server_options(parser: ArgumentParser) -> None:
         help="fastapi app server port to listen",
     )
     parser.add_argument(
-        "--reload",
-        default=False,
-        action="store_true",
-        help="same as fastapi --reload option. \
-            if true, source code changes will be reflected immediately",
+        "-l", "--lang", default="en", type=str, help="language to print"
     )
 
 
