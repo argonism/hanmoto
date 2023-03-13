@@ -29,14 +29,13 @@ class HmtLocalizerEn(HmtLocalizer):
         text_str = text.text
 
         self.printer.text(text_str)
-        self.printer.set()
 
 
 class HmtLocalizerJp(HmtLocalizer):
     def __init__(self, printer: Escpos) -> None:
         self.printer = printer
         self.printer.charcode("CP932")
-        self.printer._raw(b"\x1c\x43\x01")
+        self.printer._raw(b"\x1c\x43\x02")
 
     def text(self, text: HmtText) -> None:
         style_params = text.properties
@@ -52,12 +51,10 @@ class HmtLocalizerJp(HmtLocalizer):
         if n != 0x00:
             self.printer._raw(b"\x1c\x21" + n.to_bytes(1, byteorder="big"))
 
-        self.printer._raw(text_str.encode("shift_jis", "ignore"))
+        self.printer._raw(text_str.encode("sjis_2004", "ignore"))
         if n != 0x00:
             self.printer._raw(b"\x1c\x21\x00")
         self.printer._raw(b"\x1c\x2e")
-
-        self.printer.set()
 
 
 @unique
