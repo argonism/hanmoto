@@ -12,6 +12,7 @@ class HmtTextStyle(BaseModel):
     font: int = 0
     bold: bool = False
     underline: int = 0
+    smooth: bool = False
     width: int = 1
     height: int = 1
     density: int = 8
@@ -89,6 +90,10 @@ class HmtText(Printable):
                 "underline value must be 0 <= underline =< 2"
             )
         self.__properties.underline = underline
+        return self
+
+    def smooth(self, smooth: bool = True) -> HmtText:
+        self.__properties.smooth = smooth
         return self
 
     def width(self, width: int = 1) -> HmtText:
