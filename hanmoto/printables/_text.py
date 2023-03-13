@@ -20,6 +20,7 @@ class HmtTextStyle(BaseModel):
     flip: bool = False
     double_width: bool = False
     double_height: bool = False
+    custom_size: bool = False
 
 
 class HmtText(Printable):
@@ -100,12 +101,16 @@ class HmtText(Printable):
         if not (1 <= width <= 8):
             raise HmtValueException("width value must be 1 <= height =< 8")
         self.__properties.width = width
+        if width > 1:
+            self.__properties.custom_size = True
         return self
 
     def height(self, height: int = 1) -> HmtText:
         if not (1 <= height <= 8):
             raise HmtValueException("height value must be 1 <= height =< 8")
         self.__properties.height = height
+        if height > 1:
+            self.__properties.custom_size = True
         return self
 
     def density(self, density: int = 8) -> HmtText:
@@ -124,8 +129,14 @@ class HmtText(Printable):
 
     def double_width(self, double_width: bool = True) -> HmtText:
         self.__properties.double_width = double_width
+        if double_width:
+            self.__properties.custom_size = False
+
         return self
 
     def double_height(self, double_height: bool = True) -> HmtText:
         self.__properties.double_height = double_height
+        if double_height:
+            self.__properties.custom_size = False
+
         return self
