@@ -1,5 +1,4 @@
 from typing import Generator
-from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockFixture
