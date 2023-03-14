@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 from hanmoto.exceptions import HmtValueException
 
-from ._printable import PROPERTIES_TYPE, Printable
+from ._printable import Printable
 
 
 class HmtTextStyle(BaseModel):
@@ -24,7 +24,7 @@ class HmtTextStyle(BaseModel):
 
 
 class HmtText(Printable):
-    f"""
+    """
     Printable class for printing a text.
     ...
 
@@ -101,16 +101,14 @@ class HmtText(Printable):
         if not (1 <= width <= 8):
             raise HmtValueException("width value must be 1 <= height =< 8")
         self.__properties.width = width
-        if width > 1:
-            self.__properties.custom_size = True
+        self.__properties.custom_size = width > 1
         return self
 
     def height(self, height: int = 1) -> HmtText:
         if not (1 <= height <= 8):
             raise HmtValueException("height value must be 1 <= height =< 8")
         self.__properties.height = height
-        if height > 1:
-            self.__properties.custom_size = True
+        self.__properties.custom_size = height > 1
         return self
 
     def density(self, density: int = 8) -> HmtText:
