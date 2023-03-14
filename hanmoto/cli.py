@@ -10,7 +10,6 @@ from hanmoto.config import (
     HmtPrinterType,
 )
 from hanmoto.exceptions import HmtValueException
-from hanmoto.localizer import HmtLocalizerEnum
 from hanmoto.options import parse_options
 
 
@@ -43,7 +42,7 @@ def load_conf_from_cli() -> HmtConf:
     return HmtConf(printer_conf=printer_conf, api_conf=api_conf)
 
 
-if __name__ == "__main__":
+def run() -> None:
     conf = load_conf_from_cli()
     app = load_app(conf)
     api_conf = conf.api_conf
