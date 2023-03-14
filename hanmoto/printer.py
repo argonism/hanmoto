@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import os
+from logging import getLogger
 from types import TracebackType
-from typing import Iterable, List, Optional, Type
+from typing import Iterable, Optional, Type, Union
 
 from escpos.printer import Dummy, Escpos, Network
 
@@ -10,6 +11,8 @@ from .config import HmtConf, HmtPrinterType
 from .exceptions import HmtValueException
 from .localizer import HmtLocalizerEnum
 from .printables import HmtImage, HmtText, Printable
+
+logger = getLogger(__name__)
 
 
 class Hanmoto(object):
@@ -31,6 +34,7 @@ class Hanmoto(object):
     def __init__(self, printer: Escpos, localizer: HmtLocalizerEnum) -> None:
         self.printer = printer
         self.localizer = localizer.value(self.printer)
+        self.in_with = False
 
     @classmethod
     def from_conf(cls, conf: HmtConf) -> Hanmoto:
@@ -49,7 +53,7 @@ class Hanmoto(object):
     @classmethod
     def from_network(
         cls,
-        localizer: HmtLocalizerEnum,
+        localizer: Union[HmtLocalizerEnum, str],
         host: str = "",
         port: int = 9100,
         timeout: int = 60,
@@ -84,6 +88,11 @@ class Hanmoto(object):
             raise HmtValueException("host param is needed to be specified")
 
         printer = Network(host, port=port, timeout=timeout)
+        localizer = (
+            HmtLocalizerEnum.get_localizer(localizer)
+            if isinstance(localizer, str)
+            else localizer
+        )
         instance = cls(printer, localizer)
         return instance
 
@@ -110,6 +119,13 @@ class Hanmoto(object):
         return instance
 
     def print_sequence(self, sequence: Iterable[Printable]) -> None:
+        if not self.in_with:
+            logger.warn(
+                (
+                    "You are printing sequence from out-side of with statement."
+                    "This may prevent the cut from being performed correctly."
+                )
+            )
         for elem in sequence:
             if isinstance(elem, HmtText):
                 self.localizer.text(elem)
@@ -118,7 +134,7 @@ class Hanmoto(object):
                 self.printer.image(image_src, **elem.properties.dict())
 
     def __enter__(self) -> None:
-        self.printer.open()
+        self.in_with = True
 
     def __exit__(
         self,
@@ -126,5 +142,8 @@ class Hanmoto(object):
         exc_value: Optional[BaseException],
         traceback: Optional[TracebackType],
     ) -> None:
+        self.in_with = False
         self.printer.cut()
+
+    def __del__(self) -> None:
         self.printer.close()
