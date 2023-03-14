@@ -42,7 +42,7 @@ def load_conf_from_cli() -> HmtConf:
     return HmtConf(printer_conf=printer_conf, api_conf=api_conf)
 
 
-def run() -> None:
+def run() -> int:
     conf = load_conf_from_cli()
     app = load_app(conf)
     api_conf = conf.api_conf
@@ -50,3 +50,4 @@ def run() -> None:
         app,
         host=api_conf.api_host,
     )
+    return 0
