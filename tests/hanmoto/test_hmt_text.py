@@ -9,7 +9,7 @@ from tests.hanmoto.fixtures import patched_escpos_printer
 from tests.util import create_test_hmtconf, include_list_with_order
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture
 def dummy_hmt(request: FixtureRequest) -> Hanmoto:
     conf = create_test_hmtconf(request.param)
     printer = Hanmoto.from_conf(conf)
@@ -23,14 +23,14 @@ def test_text_style(dummy_hmt: Hanmoto) -> None:
     print_expected = [
         b"\x1b!\x00",  # ESC ! 0 (font as 1)
         b"\x1b!\x00\x1b!\x00",  # ESC ! 0 ESC ! 0 (specify normal font size)
-        b"\x1b{\x01",  # ESC { 0 (flip)
-        b"\x1db\x01",  # GS b 0 (smoothing)
-        b"\x1bE\x01",  # ESC E 0 (bold)
-        b"\x1b-\x01",  # ESC - 0 (underline)
-        b"\x1bM\x01",  # ESC M 0 (specify font B)
-        b"\x1ba\x01",  # ESC a 0 (specify text align as center)
-        b"\x1d|\x04",  # GS | 5 (specify density) * this ESC/POS commands does not found in epson ESC/POS reference.
-        b"\x1dB\x01",  # GS B 0 (invert)
+        b"\x1b{\x01",  # ESC { 1 (flip)
+        b"\x1db\x01",  # GS b 1 (smoothing)
+        b"\x1bE\x01",  # ESC E 1 (bold)
+        b"\x1b-\x01",  # ESC - 1 (underline)
+        b"\x1bM\x01",  # ESC M 1 (specify font B)
+        b"\x1ba\x01",  # ESC a 1 (specify text align as center)
+        b"\x1d|\x04",  # GS | 4 (specify density) * this ESC/POS commands does not found in epson ESC/POS reference.
+        b"\x1dB\x01",  # GS B 1 (invert)
         b"\x1bt\x00",  # ESC t 0 (code page 0)
         text_content.encode("cp437", "ignore"),
     ]

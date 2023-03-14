@@ -14,7 +14,7 @@ from tests.util import (
 
 
 @pytest.fixture
-def dummy_hmt(mocker: MockFixture) -> Hanmoto:
+def patched_hmt(mocker: MockFixture) -> Hanmoto:
     conf = create_test_hmtconf()
     htm = Hanmoto.from_conf(conf)
 
@@ -22,16 +22,14 @@ def dummy_hmt(mocker: MockFixture) -> Hanmoto:
     return htm
 
 
-def test_print_style(dummy_hmt: Hanmoto, mocker: MockerFixture) -> None:
+def test_print_style(patched_hmt: Hanmoto, mocker: MockerFixture) -> None:
     image_src = Path("salt.png").absolute()
     hmt_image = HmtImage(get_resource_path(image_src))
-    with dummy_hmt:
-        dummy_hmt.print_sequence([hmt_image])
+    with patched_hmt:
+        patched_hmt.print_sequence([hmt_image])
 
     calls = [
-        mocker.call.open(),
         mocker.call.image(image_src, **hmt_image.properties.dict()),
         mocker.call.cut(),
-        mocker.call.close(),
     ]
-    dummy_hmt.printer.assert_has_calls(calls)
+    patched_hmt.printer.assert_has_calls(calls)

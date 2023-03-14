@@ -1,7 +1,7 @@
 from pathlib import Path
-from typing import Union
+from typing import List, Union
 
-from hanmoto import HmtPrinterConf
+from hanmoto import Hanmoto, HmtPrinterConf, Printable
 from hanmoto.config import HmtConf, HmtPrinterType
 
 
@@ -23,4 +23,15 @@ def include_list_with_order(actual: list, included: list) -> bool:
     for actual_elem in actual:
         if included[correct] == actual_elem:
             correct += 1
+            if correct == len(included):
+                break
     return len(included) == correct
+
+
+def assert_printed_with_command(
+    hmt: Hanmoto, printables: List[Printable], commands: List[bytes]
+) -> None:
+    with hmt:
+        hmt.print_sequence(printables)
+    assert include_list_with_order(hmt.printer._output_list, commands)
+    hmt.printer.clear()
