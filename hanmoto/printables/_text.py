@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from pydantic import BaseModel
 
 from hanmoto.exceptions import HmtValueException
@@ -43,9 +45,11 @@ class HmtText(Printable):
     """
 
     def __init__(
-        self, text: str, properties: HmtTextStyle = HmtTextStyle()
+        self, text: str, properties: Optional[HmtTextStyle] = None
     ) -> None:
         self.text = text
+        if properties is None:
+            properties = HmtTextStyle()
         self.__properties: HmtTextStyle = properties
         super().__init__()
 
