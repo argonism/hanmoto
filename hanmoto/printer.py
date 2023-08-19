@@ -144,6 +144,3 @@ class Hanmoto(object):
     ) -> None:
         self.in_with = False
         self.printer.cut()
-
-    def __del__(self) -> None:
-        self.printer.close()
