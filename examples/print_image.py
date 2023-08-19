@@ -10,5 +10,5 @@ def print_image(printer_host: str, image_path: str) -> None:
 
 if __name__ == "__main__":
     image_path = "tests/resources/salt.png"
-    printer_host = "192.168.xx.xx"
+    printer_host = "192.168.11.26"
     print_image(printer_host, image_path)
