@@ -20,10 +20,20 @@ $ poetry install
 ## Usage
 
 ### printer as API endpoint
+
+Use `hanmoto` command to start API server.
+
+Following example starts API server with network connected printer.
+
+
 ``` bash
-$ cd hanmoto
-$ HANMOTO_PRINTER_IP={Put your printer IP address here}
-$ uvicorn hanmoto.api:app --port 1885 --host 0.0.0.0
+$ hanmoto network your.escpos.printer.ip
+```
+
+and sent request to API endpoint
+
+``` bash
+curl -X POST -H "Content-Type: application/json" -d '{"type": "text", "content": "hoge"}' http://localhost:8000/print/text
 ```
 
 ### In python
